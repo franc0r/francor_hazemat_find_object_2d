@@ -43,20 +43,11 @@ public:
     image_transport::TransportHints hints(this);
 
     imagePub_ = image_transport::create_publisher(
-        this, "image_with_objects",
-        rclcpp::QoS(1)
-            .reliability((rmw_qos_reliability_policy_t)2)
-            .get_rmw_qos_profile());
+        this, "image_with_objects", rmw_qos_profile_sensor_data);
 
     // Synchronized image + objects example
-    imageSub_.subscribe(this, "image", hints.getTransport(),
-                        rclcpp::QoS(1)
-                            .reliability((rmw_qos_reliability_policy_t)2)
-                            .get_rmw_qos_profile());
-    objectsSub_.subscribe(this, "info",
-                          rclcpp::QoS(1)
-                              .reliability((rmw_qos_reliability_policy_t)2)
-                              .get_rmw_qos_profile());
+    imageSub_.subscribe(this, "image", hints.getTransport(), rmw_qos_profile_sensor_data);
+    objectsSub_.subscribe(this, "info", rmw_qos_profile_sensor_data);
 
     exactSync_ = new message_filters::Synchronizer<MyExactSyncPolicy>(
         MyExactSyncPolicy(30), imageSub_, objectsSub_);
